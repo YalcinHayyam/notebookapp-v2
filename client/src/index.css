@@ -1,0 +1,48 @@
+.custom-btn{
+    width: 100%;
+}
+.mx-zero{
+    padding: .5%;
+}
+body{
+    background-color: #333;
+}
+.color-p{
+    color: #d63384;
+}
+.color-p:hover{
+    color: #6f42c1;
+}
+.color-b{
+   background-color:#d63384;
+}
+.color-grey{
+    background-color: #444;
+    border: 1px #d63384 solid;
+    color:  #0dcaf0;
+}
+.color-grey:focus{
+    background-color: #444;
+    border: 1px #d63384 solid;
+    color:  #0dcaf0;
+
+
+}
+.color-grey:hover{
+    border: 1px #d63384 solid;
+    color:  #0dcaf0;
+
+}
+.color-grey:enabled{
+    border: 1px #d63384 solid;
+    color:  #0dcaf0;
+}
+.btn-purple{
+    background-color: #6f42c1;
+}
+.btn-purple:active{
+    background-color: #d63384;
+}
+.btn-purple:hover{
+    background-color: #d63384;
+}
