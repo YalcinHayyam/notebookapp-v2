@@ -1,3 +1,4 @@
+
 .custom-btn{
     width: 100%;
 }
@@ -7,15 +8,34 @@
 body{
     background-color: #333;
 }
+.color-r{
+    color: rgb(241, 28, 82);
+}
+.color-r:hover{
+    color: red;
+}
+
 .color-p{
     color: #d63384;
 }
 .color-p:hover{
     color: #6f42c1;
+    background-color: #444;
+
 }
 .color-b{
    background-color:#d63384;
+    color: white;
 }
+.color-b:hover{
+    color: white;
+
+ }
+.color-b:focus{
+    background-color:#d63384;
+    color: white;
+    box-shadow: none;
+ }
 .color-grey{
     background-color: #444;
     border: 1px #d63384 solid;

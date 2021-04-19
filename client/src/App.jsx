@@ -7,21 +7,14 @@ import * as uuid from 'uuid'
 import './App.css'
 import Item from './components/Item'
 class App extends React.Component {
-    //  Sınıfın state yönetimi
     state = {
-        // Boş dizi Koruması
-        notes: [{
-            id: "temp_id_xxx", doc: "temp", content: "temp dosyası önceden oluşturulmuş not varsa silinicektir!! Eğer yoksa yenisini oluşturmak için " +
-                " sol kısımda bulunan alana not adı girip yeni not oluştur butonuna tıklayınız ardından eğer kaydetmek isterseniz kaydet butonuna basarak dosyanızı kaydedebilirsini "
-        }],
+        notes: [],
         newNote: "",
         area: "",
         selectedIndex: 0
     }
-    // Objeler yerleşince oluşacak işlemler verinin sunucudan getirilmesi ve state in doldurulması
     componentDidMount = () => {
         this.props.actions.getNotes().then(() => {
-            // Boş dizi koruması
             if (this.props.notes.length > 0) {
                 this.setState(() => {
                     return {
@@ -30,114 +23,59 @@ class App extends React.Component {
                 })
             }
             this.setState((state) => {
-                return { area: state.notes[0].content }
+                return { area: state.notes.length > 0 ? state.notes[0].content: "Hiç not yok yeni not eklemek için not adı girip yeni not oluştura tıklayınız" }
             })
         })
     }
-    // Kayedtme ve sunucuya gönderme işlemi
-    save = (e) => {
-        e.preventDefault()
+
+    save = () => {
 
         this.setState((state) => {
             var data = state.notes
             data[state.selectedIndex].content = state.area
-            // data[state.selectedIndex].content = e.target.value
             return { notes: data }
         })
-        // ------------------------------------------- axios.post('http://localhost:4000', this.state.notes[this.state.selectedIndex])
-        var tempGuard = this.state.notes.filter(note => note.id != "temp_id_xxx")
-        this.props.actions.createNote(tempGuard)
-
-        // --------------------------------------------console.log(typeof (tempGuard))
-        // --------------------------------------------console.log(this.state)
-        // --------------------------------------------this.setState((state) => {
-        // --------------------------------------------    return { notes: [{ a: state.notes }] }
-        // --------------------------------------------})
+        this.props.actions.createNote(this.state.notes)
+        alert("Bütün notlar kaydedildi !")
     }
-    // Seçili notun değiştirilme işlemi yapılan ayarlamalar
-    changeSelected = (e, id) => {
-        // sayfanın refresh olması önleme
-        e.preventDefault()
-        // index alma ve atama
+    changeSelected = (id) => {
         var note = this.state.notes.find(n => n.id == id)
         var index = this.state.notes.indexOf(note)
 
-
         this.setState((state) => {
             var data = state.notes
             data[state.selectedIndex].content = state.area
-            // data[state.selectedIndex].content = e.target.value
             return { notes: data }
         })
-        // state yönetimi
         this.setState((state) => { return { area: state.notes[index].content, selectedIndex: index } })
     }
-
-
-
-
-    // // Text Area değişikliğinin yakalanması ve ayarlamalar
-    // // Biraz kötü oldu kusura bakmayın 
-    // handleOnChange = (e) => {
-    //     e.preventDefault()
-    //     this.setState((state) => {
-    //         var data = state.notes
-    //         data[state.selectedIndex].content = state.area
-    //         // data[state.selectedIndex].content = e.target.value
-    //         return { area: e.target.value, notes: data }
-    //     })
-    //     // console.log(this.state.notes[this.state.selectedIndex].content)
-    // }
-
-
-    // Text Area değişikliğinin yakalanması ve ayarlamalar
     handleOnChange = (e) => {
         e.preventDefault()
         this.setState({ area: e.target.value })
-        // console.log(this.state.notes[this.state.selectedIndex].content)
     }
 
 
-    // Yeni notun oluşturulması ve ayarlamalar
-    create = (e) => {
-        e.preventDefault()
-        // not adının girilip girilmediğinin kontrolü
+    create = () => {
         if (this.state.newNote != "") {
-            // tempGuard ilk oluşturmada oluşan notun içeriğinin 'content' kısmının boş gelmesi hatası düzeltimi 
-            // sunucuya yazdığımız temp kodunun gitmemesi için kontrol
             this.setState((state) => {
-                var tempGuard = this.state.notes.filter(note => note.id != "temp_id_xxx")
-                // console.log("teampGuard ", tempGuard)
-                state.notes = tempGuard
+                state.notes = this.state.notes
                 state.selectedIndex = state.notes.length
                 state.area = ""
-                // yeni not için ayarlamalar ve hazırlıklar
                 return state.notes = [...state.notes, { id: uuid.v4(), doc: state.newNote + ".md", content: "" }]
 
-            }
-            )
-
-
-            //------------------------------------   tempGuard ?? this.setState({notes : this.state.notes.filter(note => note.id != "temp_id_xxx")})
-            //------------------------------------   this.setState({notes : this.state.notes.filter(note => note.id == "temp_id_xxx")})
-            // Not oluşturulduktan sonra ad bloğunun temizlenmesi
+            })
             this.setState({ newNote: "" })
         }
         else {
-            // Not adı kontrolü
             alert("Not Adı Girilmedi !!!")
         }
-        // -------------------------------------------- console.log( "filtrelenmiş veriler", this.state.notes.filter(note => note.id = "temp_id_xxx"))
     }
-    // Render işlemi
     render = () => {
         return (
             <>
-                <nav class="navbar navbar-light bg-indigo">
-                    <div class="container-fluid">
-                        <a class="navbar-brand text-white" href="#">TBook</a>
-
-
+                <nav className="navbar navbar-light bg-indigo">
+                    <div className="container-fluid">
+                        <a className="navbar-brand text-white" href="#">Notebook - v2</a>
                     </div>
                 </nav>
                 <div className="container-fluid content-center">
@@ -147,35 +85,29 @@ class App extends React.Component {
                             <div className="container-fluid mt-4 custom-block">
                                 <div className="row">
                                     <div className="col-sm-12 col-xl-8 col-md-8 mx-zero">
-                                        {/* Yeni not adı input */}
                                         <input type="text" placeholder="Not adı giriniz" className="form-control color-grey" value={this.state.newNote} onChange={(e) => this.setState({ newNote: e.target.value })} />
                                     </div>
                                     <div className="col-sm-12 col-xl-4 col-md-4 mx-zero">
-                                        {/* Yeni not oluşturma butonu  */}
-                                        <button className="form-control btn color-b text-white" onClick={e => this.create(e)}>Yeni Not</button>
+                                        <button className="form-control btn color-b" onClick={() => this.create()}>Yeni Not</button>
                                     </div>
                                 </div>
                             </div>
-
                             <h5 className="card-title text-white mt-4">Notlar</h5>
-
-                            {/* Her not için buton oluşturma */}
                             <div className="mt-4">
-                                {this.state.notes.map((note, index) => <Item changeSelected={this.changeSelected} key={index} id={note.id} note={note} />)}
+                                {this.state.notes.map(
+                                    (note, index) => <Item
+                                        selectedItem = {index == this.state.selectedIndex ? true : false}
+                                        changeSelected={this.changeSelected}
+                                        key={index}
+                                        id={note.id}
+                                        note={note} />)}
                             </div>
                         </div>
 
                         <div className="col-sm-12 col-md-12 col-xl-8 col-lg-8 col-xxl-8 mt-4">
-
-                            {/* Text Area */}
                             <h5 className="card-title text-white">Not İçeriği</h5>
                             <textarea className="form-control mt-4 color-grey" placeholder="Notunuzu giriniz" onChange={(e) => this.handleOnChange(e)} name="" id="" value={this.state.area} rows="13"></textarea>
-
-                            {/* Kaydetme butonu */}
-                            {/* <h5 className="card-title">Kaydet</h5> */}
-
-
-                            <button className="btn text-white btn-purple custom-btn text-center mt-2 mb-5" onClick={(e) => this.save(e)}>Kaydet</button>
+                            <button className="btn text-white btn-purple custom-btn text-center mt-2 mb-5 " disabled={this.state.notes.length < 1 ? true : false } onClick={() => this.save()}>Kaydet</button>
                         </div>
                     </div>
                 </div>
